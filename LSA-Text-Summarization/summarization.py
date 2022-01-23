@@ -1,36 +1,36 @@
 from lsa_summarizer import LsaSummarizer
 import nltk
+import os
 nltk.download("punkt", quiet=True)
 nltk.download("stopwords", quiet=True)
 
 from nltk.corpus import stopwords
+from rouge import Rouge
 
-source_file = "original_text.txt"
-
-with open(source_file, "r", encoding='utf-8') as file:
-    lines = file.readlines()
-
-    text = ""
-    for line in lines:
-        text += line.replace("\n", " ")
+summarizator = LsaSummarizer() 
+stopwords = stopwords.words('english')
+summarizator.stop_words = stopwords
 
 
-summarizer = LsaSummarizer()
+dir = "../Textrank-Summarization/textrank_implementation/top1000_complete"
+def evaluate():
+    original_summaries = []
+    generated_summaries = []
+    for index, filename in enumerate(os.listdir(dir)):
+        if index == 100: break
+        print(index, filename)
+        summarizator.set_filepath(dir+'/{0}/Documents_xml/{0}.xml'.format(filename))
+        f = open(dir+'/{0}/summary/{0}.gold.txt'.format(filename), "r", encoding="utf8")
+        # try:
+        original_summaries.append(f.read())
+        print(original_summaries[-1].count('\n')+5)
+        summary = summarizator(original_summaries[-1].count('\n')+5)
 
-# stopwords = stopwords.words('english')
-# summarizer.stop_words = stopwords
-
-# TODO make summary_sentences_count to be sqrt(len(input_text))
-summary_sentences_count = 5
-summary = summarizer(text, summary_sentences_count)
-
-print("------- Original text -------")
-print(text)
-print("------- End of original text -------")
+        generated_summaries.append(''.join(summary))
 
 
+    rouge = Rouge()
+    print(rouge.get_scores(original_summaries, generated_summaries, avg=True))
+    print('\n')
 
-print("\n------- Summary -------")
-
-print(" ".join(summary))
-print("------- End of summary -------")
+evaluate()

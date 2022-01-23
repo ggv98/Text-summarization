@@ -8,8 +8,9 @@ from nltk.tokenize import sent_tokenize, word_tokenize
 from numpy.linalg import svd as singular_value_decomposition
 from base_summarizer import BaseSummarizer
 from nltk.corpus import stopwords
-
+from xml_parser import XMLParser
 from stop_words import safe_get_stop_words
+from rouge import Rouge
 
 class LsaSummarizer(BaseSummarizer):
     MIN_DIMENSIONS = 3
@@ -27,17 +28,17 @@ class LsaSummarizer(BaseSummarizer):
     def stop_words(self, words):
         self._stop_words = words
 
-    def __call__(self, document, sentences_count):
+    def __call__(self, sentences_count):
 
         # word -> row index (document is given in one row)
-        dictionary = self._create_dictionary(document)
+        dictionary = self._create_dictionary()
         
         if not dictionary:
             return ()
 
-        sentences = sent_tokenize(document)
+        sentences = self.load_sentences()
 
-        matrix = self._create_matrix(document, dictionary)
+        matrix = self._create_matrix(dictionary)
         matrix = self._compute_term_frequency(matrix)
         u, sigma, v = singular_value_decomposition(matrix, full_matrices=False)
 
@@ -50,21 +51,39 @@ class LsaSummarizer(BaseSummarizer):
         return self._get_best_sentences(sentences, sentences_count,
             lambda s: next(ranks))
 
+    def set_filepath(self, filePath):
+        self.filePath = filePath
+
+    def load_sentences(self):
+        if self.filePath.endswith('.xml'):
+            parser = XMLParser()
+            data = parser.read(self.filePath)
+        else:
+            f = open(self.filePath, "r", encoding="utf8")
+            data= f.read()
+
+        sentences = sent_tokenize(data)
+        return sentences
+
     # dictionary[word, indexInText]
-    def _create_dictionary(self, document):
-        words = word_tokenize(document)
-        words = tuple(words)
+    def _create_dictionary(self):
+        raw_sentences = self.load_sentences()
+        words = []
+        for sentence in raw_sentences:
+           words.append(word_tokenize(sentence))
+        flat_words = [item for sublist in words for item in sublist]
+        flat_words = tuple(flat_words)
 
         # all the words to lower case
-        words = map(self.normalize_word, words)
+        flat_words = map(self.normalize_word, flat_words)
 
-        unique_words = frozenset(w for w in words if w not in self._stop_words)
+        unique_words = frozenset(w for w in flat_words if w not in self._stop_words)
 
         return dict((w, i) for i, w in enumerate(unique_words))
 
     # creating matrix containing info about words(rows) occurences in sentences(columns)
-    def _create_matrix(self, document, dictionary):
-        sentences = sent_tokenize(document)
+    def _create_matrix(self, dictionary):
+        sentences = self.load_sentences()
         words_count = len(dictionary)
         sentences_count = len(sentences)
         if words_count < sentences_count:
