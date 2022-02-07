@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from __future__ import division, print_function, unicode_literals
 import math
 import numpy
-
+import math
 from warnings import warn
 from nltk.tokenize import sent_tokenize, word_tokenize
 from numpy.linalg import svd as singular_value_decomposition
@@ -11,6 +11,8 @@ from nltk.corpus import stopwords
 from xml_parser import XMLParser
 from stop_words import safe_get_stop_words
 from rouge import Rouge
+import sys
+sys.setrecursionlimit(1500)
 
 class LsaSummarizer(BaseSummarizer):
     MIN_DIMENSIONS = 3
@@ -38,6 +40,7 @@ class LsaSummarizer(BaseSummarizer):
 
         sentences = self.load_sentences()
 
+
         matrix = self._create_matrix(dictionary)
         matrix = self._compute_term_frequency(matrix)
         u, sigma, v = singular_value_decomposition(matrix, full_matrices=False)
@@ -47,8 +50,9 @@ class LsaSummarizer(BaseSummarizer):
 
         # a = next(ranks)
         # b = next(ranks)
+    
 
-        return self._get_best_sentences(sentences, sentences_count,
+        return self._get_best_sentences(sentences, len(sentences),
             lambda s: next(ranks))
 
     def set_filepath(self, filePath):
@@ -63,7 +67,7 @@ class LsaSummarizer(BaseSummarizer):
             data= f.read()
 
         sentences = sent_tokenize(data)
-        return sentences
+        return self.summarize(sentences,"ball",len(sentences),5)
 
     # dictionary[word, indexInText]
     def _create_dictionary(self):
@@ -143,3 +147,29 @@ class LsaSummarizer(BaseSummarizer):
             ranks.append(math.sqrt(rank))
 
         return ranks
+    def summarize(self,sentences, keywords, sentences_count, size_of_chunks):
+        similarity_for_chuns = [(-1,0.0)]
+        n = 2
+        for i in range(sentences_count-size_of_chunks):
+           similarity = self.jaccard_similarity(''.join(sentences[i:i+size_of_chunks]),keywords)
+           similarity_for_chuns = numpy.append(similarity_for_chuns, [[i,similarity]], 0)
+
+        if len(similarity_for_chuns) < n:
+            n = len(similarity_for_chuns)
+        similarity_for_chuns = sorted(similarity_for_chuns, key=lambda x: x[1],reverse=True)[0:n]
+        sort_by_index = sorted(similarity_for_chuns, key=lambda x: x[0],reverse=False)
+        new_sentences = []
+        for i in range(n):
+            if i >= len(sort_by_index):
+                break
+            start_index = int(sort_by_index[i][0])
+            for j in range(size_of_chunks):
+               if not sentences[j+start_index] in new_sentences:
+                  new_sentences = numpy.append(new_sentences,sentences[start_index+j])
+        return new_sentences
+
+    def jaccard_similarity(self,doc_1, doc_2):
+        a = set(doc_1.split())
+        b = set(doc_2.split())
+        c = a.intersection(b)
+        return float(len(c)) / (len(a) + len(b) - len(c)) 

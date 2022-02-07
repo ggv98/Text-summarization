@@ -33,4 +33,13 @@ def evaluate():
     print(rouge.get_scores(original_summaries, generated_summaries, avg=True))
     print('\n')
 
-evaluate()
+def summarizeByKeyword():
+    original_summaries = []
+    generated_summaries = []
+    f = open("keyword.txt", "r", encoding="utf8")
+    # try:
+    summarizator.set_filepath("keyword.txt")
+    summary = summarizator(5)
+
+    print(''.join(summary))
+summarizeByKeyword()
