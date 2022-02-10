@@ -20,6 +20,8 @@ class LsaSummarizer(BaseSummarizer):
 
     # _stop_words = safe_get_stop_words("bulgarian")
 
+    filePath = ""
+
     @property
     def stop_words(self):
         return self._stop_words
@@ -30,7 +32,6 @@ class LsaSummarizer(BaseSummarizer):
 
     def __call__(self, sentences_count):
 
-        # word -> row index (document is given in one row)
         dictionary = self._create_dictionary()
         
         if not dictionary:
@@ -44,9 +45,6 @@ class LsaSummarizer(BaseSummarizer):
 
         # evaluating(ranking) the sentence importance
         ranks = iter(self._compute_ranks(sigma, v))
-
-        # a = next(ranks)
-        # b = next(ranks)
 
         return self._get_best_sentences(sentences, sentences_count,
             lambda s: next(ranks))
@@ -63,6 +61,7 @@ class LsaSummarizer(BaseSummarizer):
             data= f.read()
 
         sentences = sent_tokenize(data)
+        #return self.summarize(sentences,"ball",len(sentences),5)
         return sentences
 
     # dictionary[word, indexInText]
@@ -143,3 +142,29 @@ class LsaSummarizer(BaseSummarizer):
             ranks.append(math.sqrt(rank))
 
         return ranks
+    def summarize(self,sentences, keywords, sentences_count, size_of_chunks):
+        similarity_for_chuns = [(-1,0.0)]
+        n = 2
+        for i in range(sentences_count-size_of_chunks):
+           similarity = self.jaccard_similarity(''.join(sentences[i:i+size_of_chunks]),keywords)
+           similarity_for_chuns = numpy.append(similarity_for_chuns, [[i,similarity]], 0)
+
+        if len(similarity_for_chuns) < n:
+            n = len(similarity_for_chuns)
+        similarity_for_chuns = sorted(similarity_for_chuns, key=lambda x: x[1],reverse=True)[0:n]
+        sort_by_index = sorted(similarity_for_chuns, key=lambda x: x[0],reverse=False)
+        new_sentences = []
+        for i in range(n):
+            if i >= len(sort_by_index):
+                break
+            start_index = int(sort_by_index[i][0])
+            for j in range(size_of_chunks):
+               if not sentences[j+start_index] in new_sentences:
+                  new_sentences = numpy.append(new_sentences,sentences[start_index+j])
+        return new_sentences
+
+    def jaccard_similarity(self,doc_1, doc_2):
+        a = set(doc_1.split())
+        b = set(doc_2.split())
+        c = a.intersection(b)
+        return float(len(c)) / (len(a) + len(b) - len(c)) 

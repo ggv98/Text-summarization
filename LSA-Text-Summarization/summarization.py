@@ -11,7 +11,6 @@ summarizator = LsaSummarizer()
 stopwords = stopwords.words('english')
 summarizator.stop_words = stopwords
 
-
 dir = "../Textrank-Summarization/textrank_implementation/top1000_complete"
 def evaluate():
     original_summaries = []
@@ -32,5 +31,22 @@ def evaluate():
     rouge = Rouge()
     print(rouge.get_scores(original_summaries, generated_summaries, avg=True))
     print('\n')
+def evaluteSimpleText():
+    print("test")
+    source_file = "original_text.txt"
 
-evaluate()
+    summarizator.set_filepath("original_text.txt")
+    summary = summarizator(4)
+    print("\n------- Summary -------")
+    print(" ".join(summary))
+    print("------- End of summary -------")
+def summarizeByKeyword():
+    original_summaries = []
+    generated_summaries = []
+    f = open("keyword.txt", "r", encoding="utf8")
+    # try:
+    summarizator.set_filepath("keyword.txt")
+    summary = summarizator(5)
+
+    print(''.join(summary))
+evaluteSimpleText()
