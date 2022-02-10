@@ -22,6 +22,10 @@ class LsaSummarizer(BaseSummarizer):
 
     filePath = ""
 
+    enableKeyword = False
+
+    keywords = ""
+
     @property
     def stop_words(self):
         return self._stop_words
@@ -30,10 +34,16 @@ class LsaSummarizer(BaseSummarizer):
     def stop_words(self, words):
         self._stop_words = words
 
-    def __call__(self, sentences_count):
+    def __call__(self, sentences_count, enableKeyword = None, keywords = None):
 
         dictionary = self._create_dictionary()
         
+        if enableKeyword is not  None:
+            self.enableKeyword = enableKeyword
+
+        if keywords is not None:
+            self.keywords = keywords
+
         if not dictionary:
             return ()
 
@@ -61,7 +71,8 @@ class LsaSummarizer(BaseSummarizer):
             data= f.read()
 
         sentences = sent_tokenize(data)
-        #return self.summarize(sentences,"ball",len(sentences),5)
+        if self.keywords:
+           return self.summarize(sentences,keywords,len(sentences),5)
         return sentences
 
     # dictionary[word, indexInText]
