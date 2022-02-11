@@ -1,4 +1,5 @@
 import os
+import sys
 import numpy as np
 import pandas as pd
 import networkx as nx
@@ -9,8 +10,7 @@ from gensim.models import Word2Vec
 from scipy import spatial
 from rouge import Rouge
 from pathlib import Path
-
-from xml_parser import XMLParser
+from parsers.xml_parser import XMLParser
 
 class TextRankSummarizator():
     def __init__(self, language):

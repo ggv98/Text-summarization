@@ -8,9 +8,8 @@ from nltk.tokenize import sent_tokenize, word_tokenize
 from numpy.linalg import svd as singular_value_decomposition
 from base_summarizer import BaseSummarizer
 from nltk.corpus import stopwords
-from xml_parser import XMLParser
-from stop_words import safe_get_stop_words
-from rouge import Rouge
+from parsers.xml_parser import XMLParser
+
 
 class LsaSummarizer(BaseSummarizer):
     MIN_DIMENSIONS = 3
@@ -153,6 +152,7 @@ class LsaSummarizer(BaseSummarizer):
             ranks.append(math.sqrt(rank))
 
         return ranks
+
     def summarize(self,sentences, keywords, sentences_count, size_of_chunks):
         similarity_for_chuns = [(-1,0.0)]
         n = 2
