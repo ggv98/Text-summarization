@@ -2,16 +2,15 @@
 ## Setup 
 
 ### Python version
-[Find and download](https://www.python.org/downloads/) the python version of the pipeline docker image.  
 
-    python 3.7.9
+    python 3.8.5
 
 ### Virtual environment
 #### Create virtual environment
 
     python -m venv venv
 
-    or
+or
 
     py -m venv venv
 
