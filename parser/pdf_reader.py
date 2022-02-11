@@ -112,26 +112,26 @@ def save_data(articles):
             f.write(article[1])
 
 
-# reader = PDFReader('.\Textrank-Summarization\\textrank_implementation\\FPNO-FMI.pdf')
+# reader = PDFReader('.\\bg-articles-pdf\\FPNO-FMI.pdf')
 # articles = reader.get_articles(7, 9, 9, 108)
 # save_data(articles)
 
-# reader = PDFReader('.\Textrank-Summarization\\textrank_implementation\\FR.pdf')
+# reader = PDFReader('.\\bg-articles-pdf\\FR.pdf')
 # articles = reader.get_articles(7, 9, 9, 88)
 # save_data(articles)
 
-# reader = PDFReader('.\Textrank-Summarization\\textrank_implementation\\TF.pdf')
+# reader = PDFReader('.\\bg-articles-pdf\\TF.pdf')
 # articles = reader.get_articles(7, 8, 9, 92)
 # save_data(articles)
 
-# reader = PDFReader('.\Textrank-Summarization\\textrank_implementation\\FBM.pdf')
+# reader = PDFReader('.\\bg-articles-pdf\\FBM.pdf')
 # articles = reader.get_articles(7, 8, 8, 58)
 # save_data(articles)
 
-# reader = PDFReader('.\Textrank-Summarization\\textrank_implementation\\EEA.pdf')
-# articles = reader.get_articles(7, 8, 10, 50)
+reader = PDFReader('.\\bg-articles-pdf\\EEA.pdf')
+articles = reader.get_articles(7, 8, 10, 50)
 # save_data(articles)
 
-reader = PDFReader('.\Textrank-Summarization\\textrank_implementation\\EEA.pdf')
-articles = reader.get_articles(8, 10, 53, 159)
-save_data(articles)
+# reader = PDFReader('.\\bg-articles-pdf\\EEA.pdf')
+# articles = reader.get_articles(8, 10, 53, 159)
+# save_data(articles)

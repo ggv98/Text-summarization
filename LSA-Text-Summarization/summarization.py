@@ -1,6 +1,7 @@
 from lsa_summarizer import LsaSummarizer
 import nltk
 import os
+from pathlib import Path
 nltk.download("punkt", quiet=True)
 nltk.download("stopwords", quiet=True)
 
@@ -11,11 +12,12 @@ summarizator = LsaSummarizer()
 stopwords = stopwords.words('english')
 summarizator.stop_words = stopwords
 
-dir = "../Textrank-Summarization/textrank_implementation/top1000_complete"
+
+dir = "../top1000-complete"
 def evaluate():
     original_summaries = []
     generated_summaries = []
-    for index, filename in enumerate(os.listdir(dir)):
+    for index, filename in enumerate(os.listdir(Path(dir))):
         if index == 100: break
         print(index, filename)
         summarizator.set_filepath(dir+'/{0}/Documents_xml/{0}.xml'.format(filename))

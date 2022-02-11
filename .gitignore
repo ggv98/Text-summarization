@@ -175,3 +175,6 @@ venv.bak/
 *.settings
 *.idea*
 
+
+Textrank-Summarization/textrank_text_summarization-master/.ipynb_checkpoints/*
+Textrank-Summarization/textrank_text_summarization-master/.ipynb_checkpoints/TestRank_Text_Summarization-checkpoint.ipynb

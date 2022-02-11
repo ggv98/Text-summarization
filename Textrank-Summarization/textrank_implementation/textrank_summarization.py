@@ -8,6 +8,7 @@ from stop_words import safe_get_stop_words
 from gensim.models import Word2Vec
 from scipy import spatial
 from rouge import Rouge
+from pathlib import Path
 
 from xml_parser import XMLParser
 
@@ -32,7 +33,7 @@ class TextRankSummarizator():
         f.close()
 
     def load_sentences(self):
-        if self.filePath.endswith('.xml'):
+        if str(self.filePath).endswith('.xml'):
             parser = XMLParser()
             data = parser.read(self.filePath)
         else:
@@ -61,7 +62,7 @@ class TextRankSummarizator():
     def sentence_embeddings(self, sentences):
         # Extract word vectors
         cores = multiprocessing.cpu_count()
-        w2v_model = Word2Vec(size=10,
+        w2v_model = Word2Vec(vector_size=10,
                             min_count=1,
                             workers=cores-1)
         w2v_model.build_vocab(sentences)
@@ -75,7 +76,6 @@ class TextRankSummarizator():
         return sentence_embeddings
 
     def build_similarity_matrix(self, normalized_sentences, sentence_embeddings):
-        print(len(normalized_sentences))
         similarity_matrix = np.zeros([len(normalized_sentences), len(normalized_sentences)])
         for i,row_embedding in enumerate(sentence_embeddings):
             for j,column_embedding in enumerate(sentence_embeddings):
@@ -114,18 +114,19 @@ class TextRankSummarizator():
         return summary
 
 
-# s = TextRankSummarizator("bulgarian", './top1000_complete/A00-1031/Documents_xml/A00-1031.xml')
-# print(s.get_summary(5))
+
 
 def evaluate():
     original_summaries = []
     generated_summaries = []
     summarizator = TextRankSummarizator('english') 
-    for index, filename in enumerate(os.listdir("./top1000_complete")):
+    cwd = Path.cwd()
+    main_dir = Path.joinpath(cwd, 'top1000-complete')
+    for index, filename in enumerate(os.listdir(main_dir)):
         if index == 50: break
         print(index, filename)
-        summarizator.set_filepath('./top1000_complete/{0}/Documents_xml/{0}.xml'.format(filename))
-        f = open('./top1000_complete/{0}/summary/{0}.gold.txt'.format(filename), "r", encoding="utf8")
+        summarizator.set_filepath(Path.joinpath(main_dir, filename, 'Documents_xml', filename + '.xml'))
+        f = open(Path.joinpath(main_dir, filename, 'summary', filename + '.gold.txt'), "r", encoding="utf8")
         # try:
         original_summaries.append(f.read())
         summary = summarizator.get_summary(original_summaries[-1].count('\n')+5)
@@ -138,5 +139,29 @@ def evaluate():
     print('\n')
 
 evaluate()
+
+def evaluate_bg():
+    original_summaries = []
+    generated_summaries = []
+    summarizator = TextRankSummarizator('bulgarian') 
+    cwd = Path.cwd()
+    main_dir = Path.joinpath(cwd, 'bg_articles')
+    for index, filename in enumerate(os.listdir(main_dir)):
+        if index == 50: break
+        print(index, filename)
+        summarizator.set_filepath(Path.joinpath(main_dir, filename, 'text.txt'))
+        f = open(Path.joinpath(main_dir, filename, 'summary.txt'), "r", encoding="utf8")
+        # try:
+        original_summaries.append(f.read())
+        summary = summarizator.get_summary(original_summaries[-1].count('\n')+5)
+
+        generated_summaries.append(summary)
+
+
+    rouge = Rouge()
+    print(rouge.get_scores(original_summaries, generated_summaries, avg=True))
+    print('\n')
+
+# evaluate_bg()
 
 
