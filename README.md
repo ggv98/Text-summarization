@@ -38,9 +38,10 @@ or
   
   1. Goto venv\Lib\site-packages\google_trans_new\google_trans_new.py
   2. Update line 151:
-        response = (decoded_line + ']') -> response = decoded_line
+
+    response = (decoded_line + ']') ---> response = decoded_line
 
 ### Adding a new package.
 After adding a new package, make sure to update the *requirements.txt*.
 
-     pip freeze > requirements.txt 
+    pip freeze > requirements.txt 
