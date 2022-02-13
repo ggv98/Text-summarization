@@ -7,9 +7,11 @@ nltk.download("stopwords", quiet=True)
 
 from nltk.corpus import stopwords
 from rouge import Rouge
+from stop_words import safe_get_stop_words
 
 summarizator = LsaSummarizer() 
-stopwords = stopwords.words('english')
+#stopwords = stopwords.words('english')
+stopwords = safe_get_stop_words('bulgarian')
 summarizator.stop_words = stopwords
 
 
@@ -34,18 +36,20 @@ def evaluate():
     print(rouge.get_scores(original_summaries, generated_summaries, avg=True))
     print('\n')
 def evaluteSimpleText():
-    print("test")
     source_file = "original_text.txt"
-
-    summarizator.set_filepath("original_text.txt")
-    summary = summarizator(4)
+    f = open(source_file,"r", encoding="utf8")
+    summarizator.set_filepath(source_file)
+    summary = summarizator(8)
+    print("\n------- Orginal text -------")
+    print(f.read())
+    print("------- End of original text -------")
     print("\n------- Summary -------")
     print(" ".join(summary))
     print("------- End of summary -------")
 def summarizeByKeyword():
     # try:
-    summarizator.set_filepath("keywords.txt")
-    summary = summarizator(5)
+    summarizator.set_filepath("original_text.txt")
+    summary = summarizator(3,True,"математика")
 
     print(''.join(summary))
-evaluate()
+summarizeByKeyword()

@@ -10,14 +10,17 @@ from base_summarizer import BaseSummarizer
 from nltk.corpus import stopwords
 from parsers.xml_parser import XMLParser
 
+from stop_words import safe_get_stop_words
+from rouge import Rouge
+import math
 
 class LsaSummarizer(BaseSummarizer):
     MIN_DIMENSIONS = 3
     REDUCTION_RATIO = 1/1
 
-    _stop_words = list(stopwords.words('english'))
+    #_stop_words = list(stopwords.words('english'))
 
-    # _stop_words = safe_get_stop_words("bulgarian")
+    _stop_words = safe_get_stop_words("bulgarian")
 
     filePath = ""
 
@@ -35,13 +38,13 @@ class LsaSummarizer(BaseSummarizer):
 
     def __call__(self, sentences_count, enableKeyword = None, keywords = None):
 
-        dictionary = self._create_dictionary()
-        
         if enableKeyword is not  None:
             self.enableKeyword = enableKeyword
 
         if keywords is not None:
             self.keywords = keywords
+            
+        dictionary = self._create_dictionary()
 
         if not dictionary:
             return ()
@@ -71,7 +74,7 @@ class LsaSummarizer(BaseSummarizer):
 
         sentences = sent_tokenize(data)
         if self.keywords:
-           return self.summarize(sentences,keywords,len(sentences),5)
+           return self.summarize(sentences,self.keywords,len(sentences),int(math.sqrt(len(sentences))))
         return sentences
 
     # dictionary[word, indexInText]
@@ -154,10 +157,10 @@ class LsaSummarizer(BaseSummarizer):
         return ranks
 
     def summarize(self,sentences, keywords, sentences_count, size_of_chunks):
-        similarity_for_chuns = [(-1,0.0)]
+        similarity_for_chuns = [(-1,0.00000000)]
         n = 2
         for i in range(sentences_count-size_of_chunks):
-           similarity = self.jaccard_similarity(''.join(sentences[i:i+size_of_chunks]),keywords)
+           similarity = self.jaccard_similarity(''.join(sentences[i:i+size_of_chunks]),keywords.lower())
            similarity_for_chuns = numpy.append(similarity_for_chuns, [[i,similarity]], 0)
 
         if len(similarity_for_chuns) < n:
@@ -172,10 +175,19 @@ class LsaSummarizer(BaseSummarizer):
             for j in range(size_of_chunks):
                if not sentences[j+start_index] in new_sentences:
                   new_sentences = numpy.append(new_sentences,sentences[start_index+j])
+        print(new_sentences)
         return new_sentences
 
     def jaccard_similarity(self,doc_1, doc_2):
         a = set(doc_1.split())
         b = set(doc_2.split())
         c = a.intersection(b)
-        return float(len(c)) / (len(a) + len(b) - len(c)) 
+        c_len = len(c)
+        if len(c) > 0:
+            count = 0
+            for val in c:
+               for word in a:
+                  if word.__eq__(val):
+                     count = count+1
+            c_len = count         
+        return float(c_len) / (len(a) + len(b) - len(c)) 
