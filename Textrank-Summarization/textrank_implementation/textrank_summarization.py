@@ -10,7 +10,8 @@ from gensim.models import Word2Vec
 from scipy import spatial
 from rouge import Rouge
 from pathlib import Path
-from parsers.xml_parser import XMLParser
+sys.path.append('parsers')
+from xml_parser import XMLParser
 
 class TextRankSummarizator():
     def __init__(self, language):

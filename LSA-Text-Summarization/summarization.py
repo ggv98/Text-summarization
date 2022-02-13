@@ -36,7 +36,7 @@ def evaluate():
     print(rouge.get_scores(original_summaries, generated_summaries, avg=True))
     print('\n')
 def evaluteSimpleText():
-    source_file = "original_text.txt"
+    source_file = "LSA-Text-Summarization\original_text.txt"
     f = open(source_file,"r", encoding="utf8")
     summarizator.set_filepath(source_file)
     summary = summarizator(8)
@@ -48,7 +48,7 @@ def evaluteSimpleText():
     print("------- End of summary -------")
 def summarizeByKeyword():
     # try:
-    summarizator.set_filepath("original_text.txt")
+    summarizator.set_filepath("LSA-Text-Summarization\original_text.txt")
     summary = summarizator(3,True,"математика")
 
     print(''.join(summary))
