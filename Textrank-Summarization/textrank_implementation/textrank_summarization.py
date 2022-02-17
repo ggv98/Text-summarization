@@ -139,30 +139,49 @@ def evaluate():
     print(rouge.get_scores(original_summaries, generated_summaries, avg=True))
     print('\n')
 
-evaluate()
+# evaluate()
 
 def evaluate_bg():
+    rouge = Rouge()
+    results = {}
+
+
     original_summaries = []
     generated_summaries = []
     summarizator = TextRankSummarizator('bulgarian') 
     cwd = Path.cwd()
     main_dir = Path.joinpath(cwd, 'bg_articles')
     for index, filename in enumerate(os.listdir(main_dir)):
-        if index == 50: break
+        if index == 250: break
         print(index, filename)
         summarizator.set_filepath(Path.joinpath(main_dir, filename, 'text.txt'))
         f = open(Path.joinpath(main_dir, filename, 'summary.txt'), "r", encoding="utf8")
         # try:
-        original_summaries.append(f.read())
-        summary = summarizator.get_summary(original_summaries[-1].count('\n')+5)
+        original = f.read()
+        original_summaries.append(original)
+        summary = summarizator.get_summary(original_summaries[-1].count('\n')+10)
 
         generated_summaries.append(summary)
+        try:
+            print(rouge.get_scores(original, summary))
+            results[filename] = rouge.get_scores(original, summary)[0]['rouge-1']['p']
+        except:
+            results[filename] = 0
+            print(filename + '-----> ERORR')
+    print('\n\n\n\n\n')
+    # badFiles  = sorted(results.items(), key=lambda item: item[1])[:20]
+    # for filename, result in badFiles:
+    #     os.remove(Path.joinpath(main_dir, filename))
 
+    print(sorted(results.items(), key=lambda item: item[1])[:20])
+    # badFiles  = sorted(results.items(), key=lambda item: item[1])[:20]
+    # for filename, result in badFiles:
+    #     os.remove(Path.joinpath(main_dir, filename))
+    print('\n\n\n\n\n')
 
-    rouge = Rouge()
     print(rouge.get_scores(original_summaries, generated_summaries, avg=True))
     print('\n')
 
-# evaluate_bg()
+evaluate_bg()
 
 

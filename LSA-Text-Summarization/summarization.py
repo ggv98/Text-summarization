@@ -48,21 +48,25 @@ def evaluteSimpleText():
     print(" ".join(summary))
     print("------- End of summary -------")
 def evaluate_bg():
+    rouge = Rouge()
+    results = {}
+
     original_summaries = []
     generated_summaries = [] 
     cwd = Path.cwd()
     main_dir = Path.joinpath(cwd, 'bg_articles')
     for index, filename in enumerate(os.listdir(main_dir)):
-        if index == 50: break
+        if index == 230: break
         print(index, filename)
         summarizator.set_filepath("bg_articles/"+filename+'/text.txt')
         f = open("bg_articles/"+filename+'/summary.txt', "r", encoding="utf8")
         # try:
-        original_summaries.append(f.read())
+        original = f.read()
+        original_summaries.append(original)
         summary = summarizator(original_summaries[-1].count('\n')+5)
 
         generated_summaries.append(''.join(summary))
-    rouge = Rouge()
+
     print(rouge.get_scores(original_summaries, generated_summaries, avg=True))
     print('\n')
 def summarizeByKeyword():
@@ -71,4 +75,5 @@ def summarizeByKeyword():
     summary = summarizator(4,True,["математика","математиците","доказателство"])
 
     print(''.join(summary))
+
 evaluate_bg()

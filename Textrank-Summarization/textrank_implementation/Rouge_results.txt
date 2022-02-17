@@ -1,4 +1,4 @@
-# TextRank with pretrained model (GloVe)
+# TextRank with pretrained model (GloVe) -> English
 
 {
    "rouge-1":{
@@ -8,7 +8,7 @@
    },
    "rouge-2":{
       "r":0.042033243543653432,
-      "p":0.11897423678098954,
+      "p":0.081897423678098954,
       "f":0.068189732947632
    },
    "rouge-l":{
@@ -20,7 +20,7 @@
 
 
 
-# TextRank trained over the text itself
+# TextRank trained over the text itself -> English
 {
    "rouge-1":{
       "r":0.19285748285911836,
@@ -39,3 +39,21 @@
    }
 }
 
+# TextRank trained over the text itself -> Bulgarian
+   {
+      "rouge-1": {
+         "r": 0.14808859238438687,
+         "p": 0.23130869428259446,
+         "f": 0.16632509640686058
+      },
+      "rouge-2": {
+         "r": 0.026058888824813404,
+         "p": 0.040873783666614316,
+         "f": 0.029453469211603144
+      },
+      "rouge-l": {
+         "r": 0.13675559770474965,
+         "p": 0.21195148110990983,
+         "f": 0.15293100309069296
+      }
+   }
