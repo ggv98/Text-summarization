@@ -157,7 +157,9 @@ class LsaSummarizer(BaseSummarizer):
         similarity_for_chuns = [(-1,0.00000000)]
         n = 2
         for i in range(sentences_count-size_of_chunks):
-           similarity = self.jaccard_similarity(''.join(sentences[i:i+size_of_chunks]),keywords.lower())
+           similarity = 0
+           for j in range(len(keywords)):
+                similarity = similarity + self.jaccard_similarity(''.join(sentences[i:i+size_of_chunks]),keywords[j].lower())
            similarity_for_chuns = numpy.append(similarity_for_chuns, [[i,similarity]], 0)
 
         if len(similarity_for_chuns) < n:
