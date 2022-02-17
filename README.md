@@ -50,7 +50,9 @@ or
   There is a bug in google_trans_new library, so if you want to use pdf-reader.py to parse a new pdf document need to make the following:
   ##### Steps:
   
-  1. Goto venv\Lib\site-packages\google_trans_new\google_trans_new.py
+  1. Goto           
+  
+    venv\Lib\site-packages\google_trans_new\google_trans_new.py
   2. Update line 151:
 
     response = (decoded_line + ']') ---> response = decoded_line
