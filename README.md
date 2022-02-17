@@ -1,4 +1,18 @@
 # Text-summarization
+This repository contain to sumarization algorithms:
+- TextRank (Algorithm based on PageRank)
+- Latent semantic analysis (**LSA**)
+
+We also created a corpus of Bulgarian scientific articles and their summaries and related keywords. 
+These texts can be found in: **bg_articles**.
+
+Each of articles contain 3 files:
+- **text.txt**   (original article text)
+- **summary.txt**   (short human created summary)
+- **keywords.txt**   (human selected keywords which describe article content)
+
+This article are extracted from: [ANNUAL SCIENTIFIC CONFERENCE
+of Angel Kanchev University of Ruse and Union of Scientists - Ruse](http://conf.uni-ruse.bg/en/?cmd=dPage&pid=index)
 ## Setup 
 
 ### Python version
