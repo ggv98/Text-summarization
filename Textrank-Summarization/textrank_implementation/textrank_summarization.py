@@ -162,22 +162,6 @@ def evaluate_bg():
         summary = summarizator.get_summary(original_summaries[-1].count('\n')+10)
 
         generated_summaries.append(summary)
-        try:
-            print(rouge.get_scores(original, summary))
-            results[filename] = rouge.get_scores(original, summary)[0]['rouge-1']['p']
-        except:
-            results[filename] = 0
-            print(filename + '-----> ERORR')
-    print('\n\n\n\n\n')
-    # badFiles  = sorted(results.items(), key=lambda item: item[1])[:20]
-    # for filename, result in badFiles:
-    #     os.remove(Path.joinpath(main_dir, filename))
-
-    print(sorted(results.items(), key=lambda item: item[1])[:20])
-    # badFiles  = sorted(results.items(), key=lambda item: item[1])[:20]
-    # for filename, result in badFiles:
-    #     os.remove(Path.joinpath(main_dir, filename))
-    print('\n\n\n\n\n')
 
     print(rouge.get_scores(original_summaries, generated_summaries, avg=True))
     print('\n')
